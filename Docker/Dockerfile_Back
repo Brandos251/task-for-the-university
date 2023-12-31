@@ -1,0 +1,16 @@
+FROM php:7.4
+
+RUN apt-get update && apt-get install -y git
+ARG GIT_BRANCH=main
+RUN git clone -b ${GIT_BRANCH} https://github.com/Brandos251/FastAPIManager.git /app
+
+WORKDIR /app/backend
+RUN git checkout ${GIT_BRANCH}
+
+# Установка зависимостей PHP, используя Composer
+RUN apt-get install -y zip unzip
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+RUN composer install
+
+# Очистка кеша и удаление лишних пакетов
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
